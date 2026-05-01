@@ -8,12 +8,29 @@
 #define button 13
 #define clockPin1 6
 #define clockPin2 7
-#define datPin1 2
-#define datPin2 3
+#define dataPin1 2
+#define dataPin2 3
+#define column1 10
+#define column2 11
+#define column3 12
 int button_valor, reading = False, time_pressed = 0, time_NOT_pressed = 0;
 long start, finish;
 char morse;
-
+/*
+columna 12 bit 0bx0000000 shf1
+columna 11 bit 0b0x000000 shf1
+columna 10 bit 0b00x00000 shf1
+columna 09 bit 0b000x0000 shf1
+columna 08 bit 0bx0000000 shf2
+columna 07 bit 0b0x000000 shf2
+columna 06 bit 0b00x00000 shf2
+columna 05 bit 0b000x0000 shf2
+columna 04 bit 0b0000x000 shf2
+columna 03 bit 0b00000x00 shf2
+columna 02 bit 0b000000x0 shf2
+columna 01 bit 0b0000000x shf2
+columna 01 bit 0b0000x000 shf1
+*/
 int a[max] = {punto,raya,blank,blank,blank,blank}, b[max] = {raya, punto, punto, punto, blank, blank},
 c[max] = {raya, punto, raya, punto, blank, blank}, d[max] = {raya, punto, punto, blank, blank, blank},
 e[max] = {punto, blank, blank, blank, blank, blank}, f[max] = {punto, punto, raya, punto, blank, blank},
@@ -41,8 +58,14 @@ int index = 0, cadena[max];
 void setup()
 {
   Serial.begin(9600);
+  pinMode(dataPin1, OUTPUT);
+  pinMode(dataPin2, OUTPUT);
   pinMode(clockPin1, OUTPUT);
   pinMode(clockPin2, OUTPUT);
+  pinMode(column1, OUTPUT);
+  pinMode(column2, OUTPUT);
+  pinMode(column3, OUTPUT);
+  pinMode(button, INPUT);
 }
 int compararCadenas(int otraCadena[])
 {
@@ -103,6 +126,11 @@ void rellenarCadena()
     cadena[i] = blank;
   }
 }
+void formatearCadena()
+{
+  index = 0;
+  rellenarCadena();
+}
 void dotOrDoot(long time)
 {
   if (time < 100)return;
@@ -140,8 +168,7 @@ if (button_valor == 1)
           rellenarCadena();
         }
         convertirCadena();
-        index = 0;
-        rellenarCadena();
+        formatearCadena();
         finish = 0;
         reading = False;
       }
@@ -152,4 +179,9 @@ void loop() {
   // put your main code here, to run repeatedly:
   button_valor = (digitalRead(button) == True) ? False : True;
   deteccion(button_valor);
+  for (int j = 0; j < 256; j++) {
+    shiftOut(dataPin1, clockPin1, LSBFIRST, 0b01111111);
+    Serial.println(j);
+    delay(1000);
+  }
 }
