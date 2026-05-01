@@ -132,45 +132,45 @@ int compararCadenas(int otraCadena[])
 }
 void convertirCadena()
 {
-  int row, col;
-  if (compararCadenas(a))       {row = A[0]; col = A[1];}
-  else if (compararCadenas(b))  {row = B[0]; col = B[1];}
-  else if (compararCadenas(c))  {row = C[0]; col = D[1];}
-  else if (compararCadenas(d))  {row = D[0]; col = D[1];}
-  else if (compararCadenas(e))  {row = E[0]; col = E[1];}
-  else if (compararCadenas(f))  {row = F[0]; col = F[1];}
-  else if (compararCadenas(g))  {row = G[0]; col = G[1];}
-  else if (compararCadenas(h))  {row = H[0]; col = H[1];}
-  else if (compararCadenas(ii)) {row = I[0]; col = I[1];}
-  else if (compararCadenas(j))  {row = J[0]; col = J[1];}
-  else if (compararCadenas(k))  {row = K[0]; col = K[1];}
-  else if (compararCadenas(l))  {row = L[0]; col = L[1];}
-  else if (compararCadenas(m))  {row = M[0]; col = M[1];}
-  else if (compararCadenas(n))  {row = N[0]; col = N[1];}
-  else if (compararCadenas(o))  {row = O[0]; col = O[1];}
-  else if (compararCadenas(p))  {row = P[0]; col = P[1];}
-  else if (compararCadenas(q))  {row = Q[0]; col = Q[1];}
-  else if (compararCadenas(r))  {row = R[0]; col = R[1];}
-  else if (compararCadenas(s))  {row = S[0]; col = S[1];}
-  else if (compararCadenas(t))  {row = T[0]; col = T[1];}
-  else if (compararCadenas(u))  {row = U[0]; col = U[1];}
-  else if (compararCadenas(v))  {row = V[0]; col = V[1];}
-  else if (compararCadenas(w))  {row = W[0]; col = W[1];}
-  else if (compararCadenas(x))  {row = X[0]; col = X[1];}
-  else if (compararCadenas(y))  {row = Y[0]; col = Y[1];}
-  else if (compararCadenas(z))  {row = Z[0]; col = Z[1];}
-  else if (compararCadenas(uno))    {row = UNO[0];    col = UNO[1];}
-  else if (compararCadenas(dos))    {row = DOS[0];    col = DOS[1];}
-  else if (compararCadenas(tres))   {row = TRES[0];   col = TRES[1];}
-  else if (compararCadenas(cuatro)) {row = CUATRO[0]; col = CUATRO[1];}
-  else if (compararCadenas(cinco))  {row = CINCO[0];  col = CINCO[1];}
-  else if (compararCadenas(seis))   {row = SEIS[0];   col = SEIS[1];}
-  else if (compararCadenas(siete))  {row = SIETE[0];  col = SIETE[1];}
-  else if (compararCadenas(ocho))   {row = OCHO[0];   col = OCHO[1];}
-  else if (compararCadenas(nueve))  {row = NUEVE[0];  col = NUEVE[1];}
-  else if (compararCadenas(cero))   {row = CERO[0];   col = CERO[1];}
-  else if (compararCadenas(mas))    {row = MAS[0];    col = MAS[1];}
-  else if (compararCadenas(menos))  {row = MENOS[0];  col = MENOS[1];}
+  int row, col;              
+  if (compararCadenas(a))       {row = A[0]; col = A[1];              Serial.println('A');}
+  else if (compararCadenas(b))  {row = B[0]; col = B[1];              Serial.println('B');}
+  else if (compararCadenas(c))  {row = C[0]; col = C[1];              Serial.println('C');}
+  else if (compararCadenas(d))  {row = D[0]; col = D[1];              Serial.println('D');}
+  else if (compararCadenas(e))  {row = E[0]; col = E[1];              Serial.println('E');}
+  else if (compararCadenas(f))  {row = F[0]; col = F[1];              Serial.println('F');}
+  else if (compararCadenas(g))  {row = G[0]; col = G[1];              Serial.println('G');}
+  else if (compararCadenas(h))  {row = H[0]; col = H[1];              Serial.println('H');}
+  else if (compararCadenas(ii)) {row = I[0]; col = I[1];              Serial.println('I');}
+  else if (compararCadenas(j))  {row = J[0]; col = J[1];              Serial.println('J');}
+  else if (compararCadenas(k))  {row = K[0]; col = K[1];              Serial.println('K');}
+  else if (compararCadenas(l))  {row = L[0]; col = L[1];              Serial.println('L');}
+  else if (compararCadenas(m))  {row = M[0]; col = M[1];              Serial.println('M');}
+  else if (compararCadenas(n))  {row = N[0]; col = N[1];              Serial.println('N');}
+  else if (compararCadenas(o))  {row = O[0]; col = O[1];              Serial.println('O');}
+  else if (compararCadenas(p))  {row = P[0]; col = P[1];              Serial.println('P');}
+  else if (compararCadenas(q))  {row = Q[0]; col = Q[1];              Serial.println('Q');}
+  else if (compararCadenas(r))  {row = R[0]; col = R[1];              Serial.println('R');}
+  else if (compararCadenas(s))  {row = S[0]; col = S[1];              Serial.println('S');}
+  else if (compararCadenas(t))  {row = T[0]; col = T[1];              Serial.println('T');}
+  else if (compararCadenas(u))  {row = U[0]; col = U[1];              Serial.println('U');}
+  else if (compararCadenas(v))  {row = V[0]; col = V[1];              Serial.println('V');}
+  else if (compararCadenas(w))  {row = W[0]; col = W[1];              Serial.println('W');}
+  else if (compararCadenas(x))  {row = X[0]; col = X[1];              Serial.println('X');}
+  else if (compararCadenas(y))  {row = Y[0]; col = Y[1];              Serial.println('Y');}
+  else if (compararCadenas(z))  {row = Z[0]; col = Z[1];              Serial.println('Z');}
+  else if (compararCadenas(uno))    {row = UNO[0];    col = UNO[1];   Serial.println('1');}
+  else if (compararCadenas(dos))    {row = DOS[0];    col = DOS[1];   Serial.println('2');}
+  else if (compararCadenas(tres))   {row = TRES[0];   col = TRES[1];  Serial.println('3');}
+  else if (compararCadenas(cuatro)) {row = CUATRO[0]; col = CUATRO[1];Serial.println('4');}
+  else if (compararCadenas(cinco))  {row = CINCO[0];  col = CINCO[1]; Serial.println('5');}
+  else if (compararCadenas(seis))   {row = SEIS[0];   col = SEIS[1];  Serial.println('6');}
+  else if (compararCadenas(siete))  {row = SIETE[0];  col = SIETE[1]; Serial.println('7');}
+  else if (compararCadenas(ocho))   {row = OCHO[0];   col = OCHO[1];  Serial.println('8');}
+  else if (compararCadenas(nueve))  {row = NUEVE[0];  col = NUEVE[1]; Serial.println('9');}
+  else if (compararCadenas(cero))   {row = CERO[0];   col = CERO[1];  Serial.println('0');}
+  else if (compararCadenas(mas))    {row = MAS[0];    col = MAS[1];   Serial.println('+');}
+  else if (compararCadenas(menos))  {row = MENOS[0];  col = MENOS[1]; Serial.println('-');}
   printLED(row,col);
 }
 void rellenarCadena()
