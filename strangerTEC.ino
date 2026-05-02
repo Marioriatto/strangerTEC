@@ -61,9 +61,15 @@ void setup()
   pinMode(row2, OUTPUT);
   pinMode(row3, OUTPUT);
   pinMode(button, INPUT);
+  printLED(20,20);
 }
 void printLED(int row, int col)
 {
+  shiftOut(dataPin1, clockPin1, LSBFIRST, 0b00000000);
+  shiftOut(dataPin2, clockPin2, LSBFIRST, 0b00000000);
+  digitalWrite(row1, 0);
+  digitalWrite(row2, 0);
+  digitalWrite(row3, 0);
   if (col == 12)
     shiftOut(dataPin1, clockPin1, LSBFIRST, 0b10000000);
   else if (col == 11)
