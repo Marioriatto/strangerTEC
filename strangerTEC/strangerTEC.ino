@@ -63,6 +63,7 @@ nueve[max] = {raya, raya, raya, raya, punto, blank}, cero[max] = {raya, raya, ra
 mas[max] = {punto, raya, punto, raya, punto, blank}, menos[max] = {raya, punto, punto, punto, punto, raya};
    
 int index = 0, cadena[max];
+
 void setup()
 {
   Serial.begin(9600);
@@ -76,6 +77,7 @@ void setup()
   pinMode(button, INPUT);
   printLED(20,20);
 }
+
 void printLED(int row, int col)
 {
   shiftOut(dataPin1, clockPin1, LSBFIRST, 0b00000000);
@@ -83,6 +85,8 @@ void printLED(int row, int col)
   digitalWrite(row1, 0);
   digitalWrite(row2, 0);
   digitalWrite(row3, 0);
+  // no quiero hacer un switch :v
+  
   if (col == 12)
     shiftOut(dataPin1, clockPin1, LSBFIRST, 0b10000000);
   else if (col == 11)
@@ -252,12 +256,16 @@ void loop() {
   if (Serial.available() > 0) {
     // read the oldest byte in the buffer
     incomingByte = Serial.read();
-    
+    // necesito un caracter para comunicar el script tkinter con el arduino a traves del serial
     // ! por exclamar el mensaje en la maqueta y ? por adivinar el mensaje en la maqueta :v
     if ((char)incomingByte == '!') modo_juego = transmision;
     else if ((char)incomingByte == '?') modo_juego = escucha;
   }
-  if (modo_juego == transmision) button_valor = (digitalRead(button) == True) ? False : True;
-  if (reading_mode) deteccion(button_valor);
+  if (modo_juego == transmision) 
+  {
+    // leemos la transmision que mandan desde el boton
+    button_valor = (digitalRead(button) == True) ? False : True;
+    deteccion(button_valor);
+  }
 
 }
