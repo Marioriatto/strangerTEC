@@ -49,6 +49,8 @@ print(root.winfo_width()//2, root.winfo_height()//2)
 entry.place(x=root.winfo_width()//2, y=(root.winfo_height()*2)//3, anchor='center')
 root.mainloop()
 
+def print(ser:serial):
+    ser.writelines("'" + entry_value + "'")
 #PLANTILLA
 try:
     ser = serial.Serial(arduino_port, baud_rate, timeout=1)

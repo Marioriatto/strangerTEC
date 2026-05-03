@@ -1,9 +1,15 @@
+// CODIGO MORSE
 #define punto 1
 #define raya 2
 #define blank 0
+// MODOS DE JUEGO
+#define escucha 0
+#define transmision 1
+
 // BOOLEANOOOOS
 #define True 1
 #define False 0
+
 #define max 6
 #define button 13
 #define clockPin1 6
@@ -13,6 +19,17 @@
 #define row1 10
 #define row2 11
 #define row3 12
+
+// VARIABLES DEL PROGRAMA
+int button_valor, reading = False, modo_juego, time_pressed = 0, time_NOT_pressed = 0;
+long start, finish;
+char morse;
+/*
+time_pressed expresado en ms
+contado con millis()
+*/
+
+// POSICIONES DE ABC EN LA MAQUETA
 const int A[2] = {0,0}, B[2] = {1,0}, C[2] = {0,1},
 D[2] = {1,1}, E[2] = {0,2}, F[2] = {1,2}, G[2] = {0,3},
 H[2] = {1,3}, I[2] = {0,4}, J[2] = {1,4}, K[2] = {0,5},
@@ -23,9 +40,8 @@ X[2] = {1,11}, Y[2] = {0,12}, Z[2] = {1,12}, CERO[2] = {2,0},
 UNO[2] = {2,1}, DOS[2] = {2,2}, TRES[2] = {2,3}, CUATRO[2] = {2,4},
 CINCO[2] = {2,5}, SEIS[2] = {2,6}, SIETE[2] = {2,7}, OCHO[2] = {2,8},
 NUEVE[2] = {2,9}, MENOS[2] = {2,10}, MAS[2] = {2,11};
-int button_valor, reading = False, time_pressed = 0, time_NOT_pressed = 0;
-long start, finish;
-char morse;
+
+// VALOR MORSE DEL ABC
 int a[max] = {punto,raya,blank,blank,blank,blank}, b[max] = {raya, punto, punto, punto, blank, blank},
 c[max] = {raya, punto, raya, punto, blank, blank}, d[max] = {raya, punto, punto, blank, blank, blank},
 e[max] = {punto, blank, blank, blank, blank, blank}, f[max] = {punto, punto, raya, punto, blank, blank},
@@ -46,9 +62,6 @@ siete[max] = {raya, raya, punto, punto, punto, blank}, ocho[max] = {raya, raya, 
 nueve[max] = {raya, raya, raya, raya, punto, blank}, cero[max] = {raya, raya, raya, raya, raya, blank},
 mas[max] = {punto, raya, punto, raya, punto, blank}, menos[max] = {raya, punto, punto, punto, punto, raya};
    
-/*time_pressed expresado en ms*/
-
-//millis()
 int index = 0, cadena[max];
 void setup()
 {
@@ -236,7 +249,15 @@ if (button_valor == 1)
   }
 }
 void loop() {
-  // put your main code here, to run repeatedly:
-  button_valor = (digitalRead(button) == True) ? False : True;
-  deteccion(button_valor);
+  if (Serial.available() > 0) {
+    // read the oldest byte in the buffer
+    incomingByte = Serial.read();
+    
+    // ! por exclamar el mensaje en la maqueta y ? por adivinar el mensaje en la maqueta :v
+    if ((char)incomingByte == '!') modo_juego = transmision;
+    else if ((char)incomingByte == '?') modo_juego = escucha;
+  }
+  if (modo_juego == transmision) button_valor = (digitalRead(button) == True) ? False : True;
+  if (reading_mode) deteccion(button_valor);
+
 }
