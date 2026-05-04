@@ -75,7 +75,6 @@ void setup()
   pinMode(row2, OUTPUT);
   pinMode(row3, OUTPUT);
   pinMode(button, INPUT);
-  printLED(20,20);
 }
 
 void printLED(int row, int col)
@@ -113,6 +112,11 @@ void printLED(int row, int col)
     shiftOut(dataPin2, clockPin2, LSBFIRST, 0b00000001);
   else if (col == 0)
     shiftOut(dataPin1, clockPin1, LSBFIRST, 0b00001000);
+  else 
+  {
+    shiftOut(dataPin1, clockPin1, LSBFIRST, 0b00000000);
+    shiftOut(dataPin2, clockPin2, LSBFIRST, 0b00000000);
+  }
   if (row == 2)
   {
     digitalWrite(row3, 1);
@@ -124,6 +128,12 @@ void printLED(int row, int col)
   else if (row == 0)
   {
     digitalWrite(row1, 1);
+  }
+  else
+  {
+    digitalWrite(row1, 0);
+    digitalWrite(row2, 0);
+    digitalWrite(row3, 0);
   }
 }
 
@@ -255,17 +265,30 @@ if (button_valor == 1)
 void loop() {
   if (Serial.available() > 0) {
     // read the oldest byte in the buffer
-    incomingByte = Serial.read();
+    byte incomingByte = Serial.read();
+    Serial.println((char)incomingByte);
     // necesito un caracter para comunicar el script tkinter con el arduino a traves del serial
     // ! por exclamar el mensaje en la maqueta y ? por adivinar el mensaje en la maqueta :v
-    if ((char)incomingByte == '!') modo_juego = transmision;
-    else if ((char)incomingByte == '?') modo_juego = escucha;
+    if ((char)incomingByte == '!') 
+    {
+      modo_juego = transmision;
+      printLED(20,20);  
+    }
+    else if ((char)incomingByte == '?') 
+    {
+      modo_juego = escucha;
+      printLED(20,20);
+    }
   }
   if (modo_juego == transmision) 
   {
     // leemos la transmision que mandan desde el boton
     button_valor = (digitalRead(button) == True) ? False : True;
     deteccion(button_valor);
+  }
+  else
+  {
+    printLED(20,20);
   }
 
 }
