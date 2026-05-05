@@ -16,18 +16,14 @@ escribir = False
 frase_comunicacion_serial = str().encode('utf-8')
 frase_escrita = list()
 
-def interrupted_sleep():
-    while escribir:
-        time.sleep(0.1)
-
 def printSerial(frase:str):
     global escribir
     global frase_comunicacion_serial
     for letter in frase:
-        frase_comunicacion_serial = (letter).encode('utf-8')
-        escribir = True
-        # Esperar hasta que la letra esté escrita antes de continuar
-        Thread(target=interrupted_sleep)
+        frase_comunicacion_serial = letter
+def time_bomb():
+    while escribir:
+        time.sleep(0.1)
 start = False
 def serial_contact():
     global escribir
@@ -40,16 +36,19 @@ def serial_contact():
         ser = serial.Serial(arduino_port, baud_rate, timeout=1)
         time.sleep(2)
         while True:
-            if ser.in_waiting > 0:
+            if ser.in_waiting > 0 and not escribir:
                 c = ser.readline().decode('utf-8').rstrip()
                 print(c)
                 if c in letras:
-                    print(c)
                     frase_escrita.append(c)
-            if escribir:
-                print(f"print(frase_comunicacion_serial): {frase_comunicacion_serial.decode('utf-8')}")
-                ser.write(frase_comunicacion_serial)
+            if ser.in_waiting > 0 and (ser.readline().decode('utf-8').rstrip() == "$"):
                 escribir = False
+            if len(frase_comunicacion_serial)>0:
+                for c in frase_comunicacion_serial:
+                    print(c)
+                    ser.write(c.encode('utf-8'))
+                    time_bomb()
+                    escribir = True
     except KeyboardInterrupt:
         if 'ser' in locals() and ser.is_open:
             ser.close()
@@ -66,6 +65,10 @@ def fullscreen(root):
     root.attributes('-fullscreen', is_fullscreen)
 
 def switch_screen(root, canvas, func, widgets=[], canvas_elements=[]):
+    global frase_escrita
+    frase_escrita = list()
+    if func == screen_main:
+        printSerial(['~'])
     for widget in widgets:
         widget.place_forget()
     for element in canvas_elements:
@@ -73,6 +76,7 @@ def switch_screen(root, canvas, func, widgets=[], canvas_elements=[]):
     func(root, canvas)
 
 def screen_main(root, canvas):
+    global serial_thread
     if not start:
         Thread(target=serial_contact).start()
     widgets = list()
@@ -86,43 +90,113 @@ def screen_main(root, canvas):
 
     widgets.append(transmision_Escucha)
     widgets.append(transmision_simple)
-
+time_start = 0
 accuracy = 0
-def medir_puntaje(frase_original:str, canvas:Canvas, elementos_canvas, finish_button:Button):
+def medir_puntaje(canvas:Canvas, elementos_canvas, finish_button:Button, tipo_de_juego:str):
     global accuracy
     global frase_escrita
-    total = 0
-    frase = "".join(frase_escrita)
-    for index in range(min(len(frase_original), len(frase))):
-        if frase_original[index] == frase[index]:
-            total += 1
-    print(f'{total}{len(frase)} {total / len(frase)}')
-    accuracy =  total / len(frase)
-    canvas.itemconfig(elementos_canvas[0], text=("Escribiste:\n" + str(frase) + "\nPrecision: " + str(accuracy*100) + "%"))
-    finish_button.place_forget()
-    frase_escrita = list()
+    global turno
+    global frase
+    global time_start
+    if len(finish_button.cget('text')) == 9:
+        total = 0
+        escrita = "".join(frase_escrita)
+        for index in range(min(len(escrita), len(frase))):
+            if frase[index] == escrita[index]:
+                total += 1
+        accuracy = (total / len(frase)) if (len(escrita) > 0) else 0
+        canvas.itemconfig(elementos_canvas[0], text=("Escribiste:\n" + str(escrita) + "\nPrecision: " + str(accuracy*100) + "%"))
+        if turno == 'Jugador 1':
+            turno = 'Jugador 2'
+            jugador1['puntaje'] = (accuracy / round(time.time() - time_start))
+            finish_button.config(text = 'Empezar turno de Jugador 2')
+            time_start = 0
+        elif turno == 'Jugador 2':
+            turno = 'Fin'
+            jugador2['puntaje'] = (accuracy / round(time.time() - time_start))
+            finish_button.config(text = 'Terminar ' \
+            '')
+            time_start = 0
+        elif turno == 'Fin':
+            finish_button.place_forget()
+            time_start = 0
+            if jugador1['puntaje'] > jugador2['puntaje']:
+                ganador = "Jugador 1"
+                puntaje_ganador = jugador1['puntaje']
+                perdedor = "Jugador 2"
+                puntaje_perdedor = jugador2['puntaje']
+            elif jugador1['puntaje'] < jugador2['puntaje']:
+                ganador = "Jugador 2"
+                puntaje_ganador = jugador2['puntaje']
+                perdedor = "Jugador 1"
+                puntaje_perdedor = jugador1['puntaje']
+            else:
+                canvas.itemconfig(elementos_canvas[0],
+                              text="Empate\n Puntaje: " + f"{jugador2['puntaje']:.2f}")
+                return
+            canvas.itemconfig(elementos_canvas[0],
+                              text="Ganó: " + ganador + " Puntaje: " + f"{puntaje_ganador:.2f}" +
+                              "\nPerdió: " + perdedor + " Puntaje: "+ f"{puntaje_perdedor:.2f}")
+    else:
+        frase = frases[randint(0,len(frases)-1)]
+        frase_escrita = list()
+        finish_button.config(text = 'Confirmar')
+        if tipo_de_juego == 'simple':
+            canvas.itemconfig(elementos_canvas[0],text=turno + " escribe: " + frase)
+        else:
+            Thread(target=printSerial, args=([frase])).start()
+        time_start = time.time()
 
-
+frase = ""
 def screen_escucha(root, canvas):
-    entry = Entry(root, textvariable=entry_value, font=("Benguiat",20))
-    entry.place(x=root.winfo_width()//2, y=(root.winfo_height()*2)//3, anchor='center')
-    
-def screen_simple(root, canvas):
+    global frase_escrita
+    global turno
+    turno = "Jugador 1"
     widgets = list()
     elementos_canvas = list()
-    frase = frases[randint(0,len(frases)-1)]
     elementos_canvas.append(canvas.create_text(
             root.winfo_width()//2,
             (root.winfo_height()*2//3),
-            text="Escribe: " + frase,
+            text= "Escucha y transmisión",
             font=("Benguiat",30),
             fill="#ffffff",
             anchor='center'
         ))
-    finish_button =Button(root, text="Confirmar", font=("Benguiat",15))
-    finish_button.config(command=lambda :medir_puntaje(frase, canvas, elementos_canvas, finish_button))
+    finish_button =Button(root, text="Empezar turno de Jugador 1", font=("Benguiat",15))
+    finish_button.config(command=lambda :medir_puntaje(canvas, elementos_canvas, finish_button,'escucha'))
     finish_button.place(x=(root.winfo_width()//2), y=((root.winfo_height()*2)//3)+100, anchor='center')
     widgets.append(finish_button)
+
+    regresar =Button(root, text="Regresar", font=("Benguiat",15))
+    widgets.append(regresar)
+    regresar.config(command=lambda :switch_screen(root,canvas,screen_main, widgets, elementos_canvas))
+    regresar.place(x=(root.winfo_width()*4//5), y=((root.winfo_height()*4)//5), anchor='center')
+    
+    Thread(target=printSerial, args=(['?'])).start()
+
+def screen_simple(root, canvas):
+    global frase_escrita
+    global turno
+    turno = "Jugador 1"
+    widgets = list()
+    elementos_canvas = list()
+    elementos_canvas.append(canvas.create_text(
+            root.winfo_width()//2,
+            (root.winfo_height()*2//3),
+            text= "Transmisión simple",
+            font=("Benguiat",30),
+            fill="#ffffff",
+            anchor='center'
+        ))
+    finish_button =Button(root, text="Empezar turno de Jugador 1", font=("Benguiat",15))
+    finish_button.config(command=lambda :medir_puntaje(canvas, elementos_canvas, finish_button, 'simple'))
+    finish_button.place(x=(root.winfo_width()//2), y=((root.winfo_height()*2)//3)+100, anchor='center')
+    widgets.append(finish_button)
+
+    regresar =Button(root, text="Regresar", font=("Benguiat",15))
+    widgets.append(regresar)
+    regresar.config(command=lambda :switch_screen(root,canvas,screen_main, widgets, elementos_canvas))
+    regresar.place(x=(root.winfo_width()*4//5), y=((root.winfo_height()*4)//5), anchor='center')
     Thread(target=printSerial, args=(['!'])).start()
 
 
@@ -153,6 +227,9 @@ canvas.create_text(
         fill="#ffffff",
         anchor='center'
     )
+jugador1 = {'puntaje':-1}
+jugador2 = {'puntaje':-1}
+turno = 'Jugador 1'
 screen_main(root, canvas)
 
 root.mainloop()
