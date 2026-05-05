@@ -134,14 +134,16 @@ def medir_puntaje(canvas:Canvas, elementos_canvas, finish_button:Button, tipo_de
                               text="Ganó: " + ganador + " Puntaje: " + f"{puntaje_ganador:.2f}" +
                               "\nPerdió: " + perdedor + " Puntaje: "+ f"{puntaje_perdedor:.2f}")
     else:
-        frase = frases[randint(0,len(frases)-1)]
+        frase_index = randint(0,len(frases)-1)
+        frase = frases[frase_index]
         frase_escrita = list()
         finish_button.config(text = 'Confirmar')
         if tipo_de_juego == 'simple':
             canvas.itemconfig(elementos_canvas[0],text=turno + " escribe: " + frase)
+        else:
+            print(frase)
+            printSerial(str(frase_index))
         time_start = time.time()
-def escucha():
-    printSerial(randint(0,len(frases)-1))
 frase = ""
 def screen_escucha(root, canvas):
     global frase_escrita

@@ -357,7 +357,9 @@ void loop() {
                     default:printLED(20,20);break;
                   }
             }
-            convertedByte = '\0';
+      convertedByte = '\0';
+      modo_juego = transmision;
+      printLED(20,20);  
     }
   }
   if (modo_juego == transmision) 
