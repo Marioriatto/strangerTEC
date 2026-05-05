@@ -6,3 +6,7 @@ Un juego de turnos basado en el uso de código morse y una matriz de letras de l
 ```bash
 pip install pyserial
 ```
+
+```bash
+pip install pillow
+```
