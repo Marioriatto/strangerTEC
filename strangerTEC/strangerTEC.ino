@@ -291,7 +291,6 @@ void loop() {
     // read the oldest byte in the buffer
     incomingByte = Serial.read();
     convertedByte = (char)incomingByte;
-    Serial.println(convertedByte);
     // necesito un caracter para comunicar el script tkinter con el arduino a traves del serial
     // ! por exclamar el mensaje en la maqueta y ? por adivinar el mensaje en la maqueta :v
     if (convertedByte == '!') 
@@ -313,7 +312,6 @@ void loop() {
     {
             for (int i = 0; i < frases[(convertedByte - '0')].length(); i++)
             {  
-                  Serial.println(frases[(convertedByte - '0')][i]);
                   switch (frases[(convertedByte - '0')][i])
                   {
                     case       'A':printBuzzer(a);break;
