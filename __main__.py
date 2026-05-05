@@ -21,9 +21,8 @@ def printSerial(frase:str):
     global frase_comunicacion_serial
     for letter in frase:
         frase_comunicacion_serial = letter
-def time_bomb():
-    while escribir:
-        time.sleep(0.1)
+        escribir = True
+        
 start = False
 def serial_contact():
     global escribir
@@ -36,19 +35,16 @@ def serial_contact():
         ser = serial.Serial(arduino_port, baud_rate, timeout=1)
         time.sleep(2)
         while True:
-            if ser.in_waiting > 0 and not escribir:
+            if ser.in_waiting > 0:
                 c = ser.readline().decode('utf-8').rstrip()
                 print(c)
                 if c in letras:
                     frase_escrita.append(c)
-            if ser.in_waiting > 0 and (ser.readline().decode('utf-8').rstrip() == "$"):
-                escribir = False
-            if len(frase_comunicacion_serial)>0:
+            if escribir:
                 for c in frase_comunicacion_serial:
                     print(c)
                     ser.write(c.encode('utf-8'))
-                    time_bomb()
-                    escribir = True
+                    escribir = False
     except KeyboardInterrupt:
         if 'ser' in locals() and ser.is_open:
             ser.close()
@@ -143,10 +139,9 @@ def medir_puntaje(canvas:Canvas, elementos_canvas, finish_button:Button, tipo_de
         finish_button.config(text = 'Confirmar')
         if tipo_de_juego == 'simple':
             canvas.itemconfig(elementos_canvas[0],text=turno + " escribe: " + frase)
-        else:
-            Thread(target=printSerial, args=([frase])).start()
         time_start = time.time()
-
+def escucha():
+    printSerial(randint(0,len(frases)-1))
 frase = ""
 def screen_escucha(root, canvas):
     global frase_escrita

@@ -11,7 +11,7 @@
 #define False 0
 
 #define max 6
-#define buzzer A0
+#define buzzer 8
 #define button 13
 #define clockPin1 6
 #define clockPin2 7
@@ -25,6 +25,9 @@
 int button_valor, reading = False, modo_juego = ninguno, time_pressed = 0, time_NOT_pressed = 0;
 long start, finish;
 char morse;
+String frases[10] = {"67", "SOS","JOYCE","MIKE","DUSTIN","LUCAS","WILL","DEMOGORGON","HAWKINS","SHEINBAUM"};
+byte incomingByte;
+char convertedByte;
 /*
 time_pressed expresado en ms
 contado con millis()
@@ -78,25 +81,23 @@ void setup()
   pinMode(row2, OUTPUT);
   pinMode(row3, OUTPUT);
   pinMode(button, INPUT);
-  
 }
 void printBuzzer(int letter[])
 {
   for (int i = 0; i < max; i++)
   {
     if (letter[i] == blank)break;
-    analogWrite(buzzer, 100);
+    digitalWrite(buzzer, 1);
     int time_start = millis();
     while (True)
     {
       int deltaTime = millis() - time_start;
-      if (letter[i] == punto){if (deltaTime > 100 && deltaTime < 200){analogWrite(buzzer, 0);break;}}
-      else if (letter[i] == raya){if (deltaTime > 600){analogWrite(buzzer, 0);break;}}
+      if (letter[i] == punto){if (deltaTime > 100 && deltaTime < 200){digitalWrite(buzzer, 0);break;}}
+      else if (letter[i] == raya){if (deltaTime > 600){digitalWrite(buzzer, 0);break;}}
     }
     delay(300);
   }
   delay(1000);
-  Serial.println('$');
 }
 void printLED(int row, int col)
 {
@@ -256,13 +257,13 @@ void deteccion(int button_valor)
 {
 if (button_valor == 1)
   {
-    analogWrite(buzzer, 255);
+    digitalWrite(buzzer, 1);
     if (start == 0){start = millis();}
     reading = True;
   }
   else
   {
-    analogWrite(buzzer, 0);
+    digitalWrite(buzzer, 0);
     if(reading)
     {
       if (start != 0)
@@ -286,27 +287,77 @@ if (button_valor == 1)
   }
 }
 void loop() {
-  byte incomingByte;
   if (Serial.available() > 0) {
     // read the oldest byte in the buffer
     incomingByte = Serial.read();
-    Serial.println((char)incomingByte);
+    convertedByte = (char)incomingByte;
+    Serial.println(convertedByte);
     // necesito un caracter para comunicar el script tkinter con el arduino a traves del serial
     // ! por exclamar el mensaje en la maqueta y ? por adivinar el mensaje en la maqueta :v
-    if ((char)incomingByte == '!') 
+    if (convertedByte == '!') 
     {
       modo_juego = transmision;
       printLED(20,20);  
     }
-    else if ((char)incomingByte == '?') 
+    else if (convertedByte == '?') 
     {
       modo_juego = escucha;
       printLED(20,20);
     }
-    else if ((char)incomingByte == '~')
+    else if (convertedByte == '~')
     {
       modo_juego = ninguno;
       printLED(20,20);
+    }
+    if (modo_juego == escucha && (convertedByte - '0') >= 0 && (convertedByte - '0') <= 9)
+    {
+            for (int i = 0; i < frases[(convertedByte - '0')].length(); i++)
+            {  
+                  Serial.println(frases[(convertedByte - '0')][i]);
+                  switch (frases[(convertedByte - '0')][i])
+                  {
+                    case       'A':printBuzzer(a);break;
+                    case       'B':printBuzzer(b);break;
+                    case       'C':printBuzzer(c);break;
+                    case       'D':printBuzzer(d);break;
+                    case       'E':printBuzzer(e);break;
+                    case       'F':printBuzzer(f);break;
+                    case       'G':printBuzzer(g);break;
+                    case       'H':printBuzzer(h);break;
+                    case       'I':printBuzzer(ii);break;
+                    case       'J':printBuzzer(j);break;
+                    case       'K':printBuzzer(k);break;
+                    case       'L':printBuzzer(l);break;
+                    case       'M':printBuzzer(m);break;
+                    case       'N':printBuzzer(n);break;
+                    case       'O':printBuzzer(o);break;
+                    case       'P':printBuzzer(p);break;
+                    case       'Q':printBuzzer(q);break;
+                    case       'R':printBuzzer(r);break;
+                    case       'S':printBuzzer(s);break;
+                    case       'T':printBuzzer(t);break;
+                    case       'U':printBuzzer(u);break;
+                    case       'V':printBuzzer(v);break;
+                    case       'W':printBuzzer(w);break;
+                    case       'X':printBuzzer(x);break;
+                    case       'Y':printBuzzer(y);break;
+                    case       'Z':printBuzzer(z);break;
+                    case       '1':printBuzzer(uno);break;
+                    case       '2':printBuzzer(dos);break;
+                    case       '3':printBuzzer(tres);break;
+                    case       '4':printBuzzer(cuatro);break;
+                    case       '5':printBuzzer(cinco);break;
+                    case       '6':printBuzzer(seis);break;
+                    case       '7':printBuzzer(siete);break;
+                    case       '8':printBuzzer(ocho);break;
+                    case       '9':printBuzzer(nueve);break;
+                    case       '0':printBuzzer(cero);break;
+                    case       '+':printBuzzer(mas);break;
+                    case       '-':printBuzzer(menos);break;
+                    default:printLED(20,20);break;
+                  }
+            }
+            convertedByte = '\0';
     }
   }
   if (modo_juego == transmision) 
@@ -315,131 +366,5 @@ void loop() {
     button_valor = (digitalRead(button) == True) ? False : True;
     deteccion(button_valor);
   }
-  else if (modo_juego == escucha)
-  {
-    if (((int)incomingByte >=65 && (int)incomingByte <=90) || ((int)incomingByte >=48 && (int)incomingByte <=57))
-    {
-      switch ((char)incomingByte)
-      {
-        case       'A':
-        printBuzzer(a);
-        break;
-        case       'B':
-        printBuzzer(b);
-        break;
-        case       'C':
-        printBuzzer(c);
-        break;
-        case       'D':
-        printBuzzer(d);
-        break;
-        case       'E':
-        printBuzzer(e);
-        break;
-        case       'F':
-        printBuzzer(f);
-        break;
-        case       'G':
-        printBuzzer(g);
-        break;
-        case       'H':
-        printBuzzer(h);
-        break;
-        case       'I':
-        printBuzzer(ii);
-        break;
-        case       'J':
-        printBuzzer(j);
-        break;
-        case       'K':
-        printBuzzer(k);
-        break;
-        case       'L':
-        printBuzzer(l);
-        break;
-        case       'M':
-        printBuzzer(m);
-        break;
-        case       'N':
-        printBuzzer(n);
-        break;
-        case       'O':
-        printBuzzer(o);
-        break;
-        case       'P':
-        printBuzzer(p);
-        break;
-        case       'Q':
-        printBuzzer(q);
-        break;
-        case       'R':
-        printBuzzer(r);
-        break;
-        case       'S':
-        printBuzzer(s);
-        break;
-        case       'T':
-        printBuzzer(t);
-        break;
-        case       'U':
-        printBuzzer(u);
-        break;
-        case       'V':
-        printBuzzer(v);
-        break;
-        case       'W':
-        printBuzzer(w);
-        break;
-        case       'X':
-        printBuzzer(x);
-        break;
-        case       'Y':
-        printBuzzer(y);
-        break;
-        case       'Z':
-        printBuzzer(z);
-        break;
-        case       '1':
-        printBuzzer(uno);
-        break;
-        case       '2':
-        printBuzzer(dos);
-        break;
-        case       '3':
-        printBuzzer(tres);
-        break;
-        case       '4':
-        printBuzzer(cuatro);
-        break;
-        case       '5':
-        printBuzzer(cinco);
-        break;
-        case       '6':
-        printBuzzer(seis);
-        break;
-        case       '7':
-        printBuzzer(siete);
-        break;
-        case       '8':
-        printBuzzer(ocho);
-        break;
-        case       '9':
-        printBuzzer(nueve);
-        break;
-        case       '0':
-        printBuzzer(cero);
-        break;
-        case       '+':
-        printBuzzer(mas);
-        break;
-        case       '-':
-        printBuzzer(menos);
-        break;
-        default:
-        break;
-      }
-    }  
-  }
-  else printLED(20,20); 
 
 }
