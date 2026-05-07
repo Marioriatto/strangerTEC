@@ -10,3 +10,9 @@ pip install pyserial
 ```bash
 pip install pillow
 ```
+
+![foto1](/media/img1.jpg)
+
+![foto2](/media/img2.jpg)
+
+![foto3](/media/img3.jpg)
